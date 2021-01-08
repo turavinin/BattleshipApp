@@ -9,7 +9,7 @@ namespace BattleshipLibrary
 {
     public class GameLogic
     {
-        public static void DisplayrDefaultShotGrid(PlayerInfoModel model)
+        public static void SetDefaultShotGrid(PlayerInfoModel model)
         {
             List<string> letters = new List<string>
             {

@@ -1,4 +1,5 @@
-﻿using BattleshipLibrary.Models;
+﻿using BattleshipLibrary;
+using BattleshipLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,37 +12,42 @@ namespace Battleship
     {
         static void Main(string[] args)
         {
+
+
             // Create Player One
             PlayerInfoModel player = CreatePlayer("Player 1");
             // Create Player Two
             PlayerInfoModel opponent = CreatePlayer("Player 2");
 
-            
+            // Set default shotgrid
+            GameLogic.SetDefaultShotGrid(player);
+
 
             // LOOP 5 times
-                // Ask player 1 ship-positions
-                // Check if its a valid position
-                // Store position
-                // switch player-opponent
+            // Ask player 1 ship-positions
+            // Check if its a valid position
+            // Store position
+            // switch player-opponent
 
             // LOOP 5 times
-                // Ask player 2 ship-positions
-                // Check if its a valid position
-                // Store position
-                // switch player-opponent
+            // Ask player 2 ship-positions
+            // Check if its a valid position
+            // Store position
+            // switch player-opponent
 
 
             // LOOP until opponent still have ships
             // Show players shotspot
+            DisplayShotGrid(player);
             // Ask player shot
             // Check if shot is valid
             // Store shot
             // Check if it hit a ship or water
-                // if it hit a ship:
-                    // update opponent shipspot
-                    // update player shotspot
-                // if hit water:
-                    // update player shot spot
+            // if it hit a ship:
+            // update opponent shipspot
+            // update player shotspot
+            // if hit water:
+            // update player shot spot
             // show opponents remaining ships
             // clean console
             // switch player / oppponent
@@ -51,8 +57,23 @@ namespace Battleship
             // ask if they want to play again
 
 
-
             Console.ReadLine();
+        }
+
+        private static void DisplayShotGrid(PlayerInfoModel player)
+        {
+            string currentRow = player.PlayerShotGrid[0].SpotLetter;
+
+            foreach (var spot in player.PlayerShotGrid)
+            {
+                if (currentRow != spot.SpotLetter)
+                {
+                    Console.WriteLine();
+                    currentRow = spot.SpotLetter;
+                }
+
+                Console.Write($" {spot.SpotLetter}{spot.SpotNumber} ");
+            }
         }
 
         private static PlayerInfoModel CreatePlayer(string defaultPlayerName)
