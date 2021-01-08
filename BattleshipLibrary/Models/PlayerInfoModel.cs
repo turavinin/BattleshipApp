@@ -9,8 +9,8 @@ namespace BattleshipLibrary.Models
     public class PlayerInfoModel
     {
         public string PlayerName { get; set; }
-        public List<GridSpotModel> PlayerShipSpot { get; set; }
-        public List<GridSpotModel> PlayerShotSpot { get; set; }
+        public List<GridSpotModel> PlayerShipSpot { get; set; } = new List<GridSpotModel>();
+        public List<GridSpotModel> PlayerShotGrid { get; set; } = new List<GridSpotModel>();
 
 
     }
