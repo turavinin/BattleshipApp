@@ -40,6 +40,27 @@ namespace BattleshipLibrary
             
         }
 
+        public static void AddShipToGrid(PlayerInfoModel player, string shipSpot)
+        {
+            (string letter, int number) = SplitPosition(player, shipSpot);
+
+            GridSpotModel ship = new GridSpotModel
+            {
+                SpotLetter = letter,
+                SpotNumber = number,
+                Status = GridSpotStatus.Ship
+            };
+            player.PlayerShipSpot.Add(ship);
+        }
+
+        private static (string letter, int number) SplitPosition(PlayerInfoModel player, string shipSpot)
+        {
+            string letterOutput = shipSpot.Substring(0, 1);
+            int numberOutput = int.Parse(shipSpot.Substring(1));
+
+            return (letterOutput, numberOutput);
+        }
+
         private static void AddSpot(PlayerInfoModel model, string letter, int number)
         {
             GridSpotModel spot = new GridSpotModel

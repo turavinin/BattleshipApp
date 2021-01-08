@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Battleship
@@ -21,24 +22,37 @@ namespace Battleship
 
             // Set default shotgrid
             GameLogic.SetDefaultShotGrid(player);
+            GameLogic.SetDefaultShotGrid(opponent);
 
 
-            // LOOP 5 times
-            // Ask player 1 ship-positions
-            // Check if its a valid position
-            // Store position
-            // switch player-opponent
+            // Ask ship positions
+            do
+            {
+                DisplayShotGrid(player);
+                Console.WriteLine();
+                Console.WriteLine();
 
-            // LOOP 5 times
-            // Ask player 2 ship-positions
-            // Check if its a valid position
-            // Store position
-            // switch player-opponent
+                // Ask player ship-positions
+                string shipSpot = AskPlayerShipSpot(player);
+
+                // Store position FALTA VER SI YA NO HAY UN BARCO EN ESA POSICION
+                GameLogic.AddShipToGrid(player, shipSpot);
+
+                // switch player-opponent
+                (player, opponent) = (opponent, player);
+
+                Console.Clear();
+            } while (player.PlayerShipSpot.Count < 5);
+
+
+            
+
+
 
 
             // LOOP until opponent still have ships
             // Show players shotspot
-            DisplayShotGrid(player);
+            //DisplayShotGrid(player);
             // Ask player shot
             // Check if shot is valid
             // Store shot
@@ -58,6 +72,32 @@ namespace Battleship
 
 
             Console.ReadLine();
+        }
+
+        private static string ValidatePostion(string position)
+        {
+            string output = position;
+
+            string pattern = @"(^[A-Ea-e][1-5]$)";
+            Regex reg = new Regex(pattern);
+
+            while (reg.IsMatch(output) == false)
+            {
+                Console.Write("Invalid position. Please try again: ");
+                output = Console.ReadLine();
+            }
+
+            return output; 
+        }
+
+
+        private static string AskPlayerShipSpot(PlayerInfoModel player)
+        {
+            Console.Write($"{player.PlayerName}, place your ship (ej. A3): ");
+            string position = Console.ReadLine();
+            string output = ValidatePostion(position);
+
+            return output; 
         }
 
         private static void DisplayShotGrid(PlayerInfoModel player)
