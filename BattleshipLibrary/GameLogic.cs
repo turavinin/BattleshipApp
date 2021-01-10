@@ -72,5 +72,30 @@ namespace BattleshipLibrary
             model.PlayerShotGrid.Add(spot);
         }
 
+        public static bool ValidateSpot(PlayerInfoModel player, string position)
+        {
+            bool output = false;
+
+            (string letter, int number) = SplitPosition(player, position);
+
+            int index = SearchIndex(player, letter, number);
+
+            // Check if index exist
+            if (index < 0)
+            {
+                output = true;
+
+                return output; 
+            }
+
+            return output; 
+        }
+
+        private static int SearchIndex(PlayerInfoModel player, string letter, int number)
+        {
+            int output = player.PlayerShipSpot.FindIndex(e => e.SpotLetter == letter && e.SpotNumber == number);
+
+            return output; 
+        }
     }
 }

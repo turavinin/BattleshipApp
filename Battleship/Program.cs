@@ -13,12 +13,12 @@ namespace Battleship
     {
         static void Main(string[] args)
         {
-
-
             // Create Player One
             PlayerInfoModel player = CreatePlayer("Player 1");
             // Create Player Two
             PlayerInfoModel opponent = CreatePlayer("Player 2");
+
+            Console.Clear();
 
             // Set default shotgrid
             GameLogic.SetDefaultShotGrid(player);
@@ -35,7 +35,7 @@ namespace Battleship
                 // Ask player ship-positions
                 string shipSpot = AskPlayerShipSpot(player);
 
-                // Store position FALTA VER SI YA NO HAY UN BARCO EN ESA POSICION
+                // Store position FALTA VER SI YA HAY UN BARCO EN ESA POSICION
                 GameLogic.AddShipToGrid(player, shipSpot);
 
                 // switch player-opponent
@@ -74,17 +74,29 @@ namespace Battleship
             Console.ReadLine();
         }
 
-        private static string ValidatePostion(string position)
+        private static string ValidatePostion(PlayerInfoModel player, string position)
         {
             string output = position;
 
+            // Validate string
             string pattern = @"(^[A-Ea-e][1-5]$)";
             Regex reg = new Regex(pattern);
 
+            // Validate if spot is free
+            bool isFreeSpot = GameLogic.ValidateSpot(player, position);
+
+
             while (reg.IsMatch(output) == false)
             {
-                Console.Write("Invalid position. Please try again: ");
+                    Console.Write("Invalid position. Please try again: ");
+                    output = Console.ReadLine();
+            }
+
+            while (isFreeSpot == false)
+            {
+                Console.Write("Already Ship. Please try again: ");
                 output = Console.ReadLine();
+                isFreeSpot = GameLogic.ValidateSpot(player, output);
             }
 
             return output; 
@@ -93,9 +105,9 @@ namespace Battleship
 
         private static string AskPlayerShipSpot(PlayerInfoModel player)
         {
-            Console.Write($"{player.PlayerName}, place your ship (ej. A3): ");
+            Console.Write($"{player.PlayerName}, place your {player.PlayerShipSpot.Count + 1} ship (ej. A3): ");
             string position = Console.ReadLine();
-            string output = ValidatePostion(position);
+            string output = ValidatePostion(player, position);
 
             return output; 
         }
