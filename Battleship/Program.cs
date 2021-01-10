@@ -35,7 +35,7 @@ namespace Battleship
                 // Ask player ship-positions
                 string shipSpot = AskPlayerShipSpot(player);
 
-                // Store position FALTA VER SI YA HAY UN BARCO EN ESA POSICION
+                // Store position
                 GameLogic.AddShipToGrid(player, shipSpot);
 
                 // switch player-opponent
@@ -83,25 +83,36 @@ namespace Battleship
             Regex reg = new Regex(pattern);
 
             // Validate if spot is free
-            bool isFreeSpot = GameLogic.ValidateSpot(player, position);
+            bool isFreeSpot = false;
+            bool checkSpot = false;
 
-
-            while (reg.IsMatch(output) == false)
+            do
             {
+                if (reg.IsMatch(output) == false)
+                {
                     Console.Write("Invalid position. Please try again: ");
                     output = Console.ReadLine();
-            }
+                }
+                else if (reg.IsMatch(output) == true && checkSpot == false)
+                {
+                    isFreeSpot = GameLogic.ValidateSpot(player, output);
+                    checkSpot = true;
+                }
+                else if (isFreeSpot == false)
+                {
+                    Console.Write("There is already a ship in that position. Please try again: ");
+                    output = Console.ReadLine();
+                    checkSpot = false;
+                }
+                else if(reg.IsMatch(output) == true && checkSpot == true)
+                {
+                    isFreeSpot = true; 
+                }
 
-            while (isFreeSpot == false)
-            {
-                Console.Write("Already Ship. Please try again: ");
-                output = Console.ReadLine();
-                isFreeSpot = GameLogic.ValidateSpot(player, output);
-            }
+            } while (reg.IsMatch(output) == false || isFreeSpot == false);
 
             return output; 
         }
-
 
         private static string AskPlayerShipSpot(PlayerInfoModel player)
         {
