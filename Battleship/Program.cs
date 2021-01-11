@@ -63,16 +63,23 @@ namespace Battleship
 
                 // Check if it hit a ship or water
                 ShowShotResult(player, opponent, shot);
-                // if it hit a ship:
-                GameLogic.UpadreShotGrid(player, opponent, shot);
-                    // update opponent shipspot
-                    // update player shotspot
-                // if hit water:
-                    // update player shot spot
-                // show opponents remaining ships
 
+                // Update player shotgrid and opponent ship status
+                GameLogic.UpadateGrid(player, opponent, shot);
 
+                // Show opponents remaining ships
+                ShowShipsNumber(player, opponent);
 
+                if (GameLogic.RemainingShips(opponent) == 0)
+                {
+                    winner = player;
+                }
+                else
+                {
+                    (player, opponent) = (opponent, player);
+                }
+
+                Console.ReadLine();
 
             } while (winner == null);
 
@@ -97,6 +104,12 @@ namespace Battleship
             Console.ReadLine();
         }
 
+        private static void ShowShipsNumber(PlayerInfoModel player, PlayerInfoModel opponent)
+        {
+            Console.WriteLine($"Your remaining ships: {GameLogic.RemainingShips(player)} ");
+            Console.WriteLine($"{opponent.PlayerName} remaining ships: {GameLogic.RemainingShips(opponent)} ");
+        }
+
         private static void ShowShotResult(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
         {
             bool isHit = GameLogic.CheckShotTarget(player, opponent, shot); 
@@ -114,6 +127,7 @@ namespace Battleship
 
         private static string AskPlayerShot(PlayerInfoModel player)
         {
+            Console.WriteLine();
             Console.Write($"{player.PlayerName}, what is your shot? (ej. A3): ");
             string shotElection = Console.ReadLine();
 

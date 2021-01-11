@@ -55,7 +55,7 @@ namespace BattleshipLibrary
 
         private static (string letter, int number) SplitPosition(PlayerInfoModel player, string shipSpot)
         {
-            string letterOutput = shipSpot.Substring(0, 1);
+            string letterOutput = shipSpot.Substring(0, 1).ToUpper();
             int numberOutput = int.Parse(shipSpot.Substring(1));
 
             return (letterOutput, numberOutput);
@@ -72,16 +72,47 @@ namespace BattleshipLibrary
             model.PlayerShotGrid.Add(spot);
         }
 
-        public static void UpadreShotGrid(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
+        public static void UpadateGrid(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
         {
             (string letter, int number) = SplitPosition(player, shot);
+
+            int shotIndex = SearchShotIndex(player, letter, number);
+            int opponentIndex = SearchShipIndex(opponent, letter, number);
 
             bool isHit = CheckShotTarget(player, opponent, shot);
 
             if (isHit == true)
             {
+                // Update Player
+                player.PlayerShotGrid[shotIndex].SpotLetter = "X";
+                player.PlayerShotGrid[shotIndex].SpotNumber = 0;
+                player.PlayerShotGrid[shotIndex].Status = GridSpotStatus.Hit;
+
+                // Update Opponent
+                opponent.PlayerShipSpot[opponentIndex].Status = GridSpotStatus.Sunk;
 
             }
+            else
+            {
+                player.PlayerShotGrid[shotIndex].Status = GridSpotStatus.Miss;
+                player.PlayerShotGrid[shotIndex].SpotLetter = "O";
+                player.PlayerShotGrid[shotIndex].SpotNumber = 0;
+            }
+        }
+
+        public static int RemainingShips(PlayerInfoModel model)
+        {
+            int output = 0;
+
+            foreach (var ship in model.PlayerShipSpot)
+            {
+                if (ship.Status == GridSpotStatus.Ship)
+                {
+                    output++;
+                }
+            }
+
+            return output; 
         }
 
         public static bool ValidateSpot(PlayerInfoModel player, string position)
@@ -90,7 +121,7 @@ namespace BattleshipLibrary
 
             (string letter, int number) = SplitPosition(player, position);
 
-            int index = SearchIndex(player, letter, number);
+            int index = SearchShipIndex(player, letter, number);
 
             // Check if index exist
             if (index < 0)
@@ -103,11 +134,18 @@ namespace BattleshipLibrary
             return output; 
         }
 
-        private static int SearchIndex(PlayerInfoModel player, string letter, int number)
+        private static int SearchShipIndex(PlayerInfoModel player, string letter, int number)
         {
             int output = player.PlayerShipSpot.FindIndex(e => e.SpotLetter == letter && e.SpotNumber == number);
 
             return output; 
+        }
+
+        private static int SearchShotIndex(PlayerInfoModel player, string letter, int number)
+        {
+            int output = player.PlayerShotGrid.FindIndex(e => e.SpotLetter == letter && e.SpotNumber == number);
+
+            return output;
         }
 
         public static bool CheckShotTarget(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
@@ -116,9 +154,9 @@ namespace BattleshipLibrary
 
             (string letter, int number) = SplitPosition(player, shot);
 
-            int opponentIndex = SearchIndex(opponent, letter, number);
+            int opponentIndex = SearchShipIndex(opponent, letter, number);
 
-            if (opponent.PlayerShipSpot[opponentIndex].Status == GridSpotStatus.Ship)
+            if (opponentIndex > -1)
             {
                 output = true;
 
@@ -134,7 +172,7 @@ namespace BattleshipLibrary
 
             (string letter, int number) = SplitPosition(player, shotElection);
 
-            int index = SearchIndex(player, letter, number);
+            int index = SearchShotIndex(player, letter, number);
 
             // Check if already shoted there
             if (player.PlayerShotGrid[index].Status == GridSpotStatus.Empty)
