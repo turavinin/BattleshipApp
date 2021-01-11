@@ -72,6 +72,18 @@ namespace BattleshipLibrary
             model.PlayerShotGrid.Add(spot);
         }
 
+        public static void UpadreShotGrid(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
+        {
+            (string letter, int number) = SplitPosition(player, shot);
+
+            bool isHit = CheckShotTarget(player, opponent, shot);
+
+            if (isHit == true)
+            {
+
+            }
+        }
+
         public static bool ValidateSpot(PlayerInfoModel player, string position)
         {
             bool output = false;
@@ -94,6 +106,42 @@ namespace BattleshipLibrary
         private static int SearchIndex(PlayerInfoModel player, string letter, int number)
         {
             int output = player.PlayerShipSpot.FindIndex(e => e.SpotLetter == letter && e.SpotNumber == number);
+
+            return output; 
+        }
+
+        public static bool CheckShotTarget(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
+        {
+            bool output = false; 
+
+            (string letter, int number) = SplitPosition(player, shot);
+
+            int opponentIndex = SearchIndex(opponent, letter, number);
+
+            if (opponent.PlayerShipSpot[opponentIndex].Status == GridSpotStatus.Ship)
+            {
+                output = true;
+
+                return output; 
+            }
+
+            return output; 
+        }
+
+        public static bool ValidateShotSpot(PlayerInfoModel player, string shotElection)
+        {
+            bool output = false;
+
+            (string letter, int number) = SplitPosition(player, shotElection);
+
+            int index = SearchIndex(player, letter, number);
+
+            // Check if already shoted there
+            if (player.PlayerShotGrid[index].Status == GridSpotStatus.Empty)
+            {
+                output = true;
+                return output; 
+            }
 
             return output; 
         }

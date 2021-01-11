@@ -12,7 +12,10 @@ namespace Battleship
     class Program
     {
         static void Main(string[] args)
-        {
+        {   
+            // Welcome Message
+            WelcomeMessage();
+
             // Create Player One
             PlayerInfoModel player = CreatePlayer("Player 1");
             // Create Player Two
@@ -24,10 +27,11 @@ namespace Battleship
             GameLogic.SetDefaultShotGrid(player);
             GameLogic.SetDefaultShotGrid(opponent);
 
-
-            // Ask ship positions
+            // SHIP POSITIONS
             do
             {
+                PostionMessage();
+
                 DisplayShotGrid(player);
                 Console.WriteLine();
                 Console.WriteLine();
@@ -44,27 +48,46 @@ namespace Battleship
                 Console.Clear();
             } while (player.PlayerShipSpot.Count < 5);
 
+            // GAME
+            GameMessage();
+
+            PlayerInfoModel winner = null;
+
+            do
+            {
+                // DisplayShotGrid(player);
+                DisplayShotGrid(player);
+
+                // Ask player shot - validate
+                string shot = AskPlayerShot(player);
+
+                // Check if it hit a ship or water
+                ShowShotResult(player, opponent, shot);
+                // if it hit a ship:
+                GameLogic.UpadreShotGrid(player, opponent, shot);
+                    // update opponent shipspot
+                    // update player shotspot
+                // if hit water:
+                    // update player shot spot
+                // show opponents remaining ships
+
+
+
+
+            } while (winner == null);
+
 
             
 
 
 
 
-            // LOOP until opponent still have ships
-            // Show players shotspot
-            //DisplayShotGrid(player);
-            // Ask player shot
-            // Check if shot is valid
-            // Store shot
-            // Check if it hit a ship or water
-            // if it hit a ship:
-            // update opponent shipspot
-            // update player shotspot
-            // if hit water:
-            // update player shot spot
-            // show opponents remaining ships
-            // clean console
-            // switch player / oppponent
+            // LOOP until opponent still have ships =>
+
+
+
+                // clean console
+                // switch player / oppponent
 
             // anunce the winner
             // show how many shots the winner needed
@@ -72,6 +95,90 @@ namespace Battleship
 
 
             Console.ReadLine();
+        }
+
+        private static void ShowShotResult(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
+        {
+            bool isHit = GameLogic.CheckShotTarget(player, opponent, shot); 
+
+            if (isHit == true)
+            {
+                Console.WriteLine($"{player.PlayerName}, you destroyed a ship!");
+            }
+            else
+            {
+                Console.WriteLine($"{player.PlayerName}, you missed!");
+            }
+
+        }
+
+        private static string AskPlayerShot(PlayerInfoModel player)
+        {
+            Console.Write($"{player.PlayerName}, what is your shot? (ej. A3): ");
+            string shotElection = Console.ReadLine();
+
+            string output = ValidateShot(player, shotElection);
+
+            return output; 
+        }
+
+        private static string ValidateShot(PlayerInfoModel player, string shotElection)
+        {
+            // Validate string
+            string pattern = @"(^[A-Ea-e][1-5]$)";
+            Regex reg = new Regex(pattern);
+
+            // Validate shot position
+            bool isFreeSpot = false;
+            bool checkSpot = false;
+
+            do
+            {
+                if (reg.IsMatch(shotElection) == false)
+                {
+                    Console.Write("Invalid shot. Please try again: ");
+                    shotElection = Console.ReadLine();
+                }
+                else if (reg.IsMatch(shotElection) == true && checkSpot == false)
+                {
+                    isFreeSpot = GameLogic.ValidateShotSpot(player, shotElection);
+                    checkSpot = true;
+                }
+                else if (isFreeSpot == false)
+                {
+                    Console.Write("You had already shot there. Please try again: ");
+                    shotElection = Console.ReadLine();
+                    checkSpot = false;
+                }
+                else if (reg.IsMatch(shotElection) == true && checkSpot == true)
+                {
+                    isFreeSpot = true;
+                }
+
+            } while (reg.IsMatch(shotElection) == false || isFreeSpot == false);
+
+            return shotElection;
+        }
+
+        private static void GameMessage()
+        {
+            Console.WriteLine();
+            Console.WriteLine("THE GAME STARTS");
+            Console.WriteLine();
+        }
+
+        private static void PostionMessage()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Each player will position his five ships.");
+            Console.WriteLine();
+        }
+
+        private static void WelcomeMessage()
+        {
+            Console.WriteLine();
+            Console.WriteLine("WELCOME TO BATTLESHIP!");
+            Console.WriteLine();
         }
 
         private static string ValidatePostion(PlayerInfoModel player, string position)
