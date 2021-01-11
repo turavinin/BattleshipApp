@@ -56,10 +56,13 @@ namespace Battleship
             do
             {
                 // DisplayShotGrid(player);
+                Console.WriteLine();
                 DisplayShotGrid(player);
+                Console.WriteLine();
 
                 // Ask player shot - validate
                 string shot = AskPlayerShot(player);
+                Console.WriteLine();
 
                 // Check if it hit a ship or water
                 ShowShotResult(player, opponent, shot);
@@ -79,7 +82,10 @@ namespace Battleship
                     (player, opponent) = (opponent, player);
                 }
 
+                Console.WriteLine();
+                Console.Write("Press any key");
                 Console.ReadLine();
+                Console.Clear();
 
             } while (winner == null);
 
@@ -246,17 +252,31 @@ namespace Battleship
 
         private static void DisplayShotGrid(PlayerInfoModel player)
         {
-            string currentRow = player.PlayerShotGrid[0].SpotLetter;
+
+            string currentRow = player.PlayerShotGrid[0].RowLetter;
 
             foreach (var spot in player.PlayerShotGrid)
             {
-                if (currentRow != spot.SpotLetter)
+                if (currentRow != spot.RowLetter)
                 {
                     Console.WriteLine();
-                    currentRow = spot.SpotLetter;
+                    currentRow = spot.RowLetter;
+                }
+                
+                if (spot.Status == GridSpotStatus.Hit)
+                {
+                    Console.Write($" XX ");
+                }
+                else if (spot.Status == GridSpotStatus.Miss)
+                {
+                    Console.Write($" OO ");
+                }
+                else
+                {
+                    Console.Write($" {spot.SpotLetter}{spot.SpotNumber} ");
                 }
 
-                Console.Write($" {spot.SpotLetter}{spot.SpotNumber} ");
+                
             }
         }
 

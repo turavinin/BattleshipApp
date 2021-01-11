@@ -67,6 +67,7 @@ namespace BattleshipLibrary
             {
                 SpotLetter = letter,
                 SpotNumber = number,
+                RowLetter = letter,
                 Status = GridSpotStatus.Empty
             };
             model.PlayerShotGrid.Add(spot);
@@ -84,8 +85,6 @@ namespace BattleshipLibrary
             if (isHit == true)
             {
                 // Update Player
-                player.PlayerShotGrid[shotIndex].SpotLetter = "X";
-                player.PlayerShotGrid[shotIndex].SpotNumber = 0;
                 player.PlayerShotGrid[shotIndex].Status = GridSpotStatus.Hit;
 
                 // Update Opponent
@@ -95,8 +94,6 @@ namespace BattleshipLibrary
             else
             {
                 player.PlayerShotGrid[shotIndex].Status = GridSpotStatus.Miss;
-                player.PlayerShotGrid[shotIndex].SpotLetter = "O";
-                player.PlayerShotGrid[shotIndex].SpotNumber = 0;
             }
         }
 
