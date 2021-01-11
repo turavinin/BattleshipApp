@@ -26,52 +26,44 @@ namespace Battleship
             GameLogic.SetDefaultShotGrid(player);
             GameLogic.SetDefaultShotGrid(opponent);
 
-            // SHIP POSITIONS
-            do
-            {
-                ConsoleMessages.PostionMessage();
+            // Ship positions
+            ShipPositions(player);
+            Console.Clear();
+            ShipPositions(opponent);
+            Console.Clear();
 
-                DisplayShotGrid(player);
-                Console.WriteLine();
-                Console.WriteLine();
+            // Game
+            PlayerInfoModel winner = StartBattle(player, opponent);
+            
+            // Message to winner
+            ConsoleMessages.WinnerMessage(winner);
+        }
 
-                // Ask player ship-positions
-                string shipSpot = DataRequests.AskPlayerShipSpot(player);
-
-                // Store position
-                GameLogic.AddShipToGrid(player, shipSpot);
-
-                // switch player-opponent
-                (player, opponent) = (opponent, player);
-
-                Console.Clear();
-            } while (player.PlayerShipSpot.Count < 5);
-
-            // GAME
-            ConsoleMessages.GameMessage();
-
+        private static PlayerInfoModel StartBattle(PlayerInfoModel player, PlayerInfoModel opponent)
+        {
             PlayerInfoModel winner = null;
 
             do
             {
                 // DisplayShotGrid(player);
+                ConsoleMessages.DisplayPlayerName(player);
                 Console.WriteLine();
                 DisplayShotGrid(player);
                 Console.WriteLine();
 
                 // Ask player shot - validate
-                string shot = DataRequests.AskPlayerShot(player);
+                string shot = DataRequests.AskPlayerShotSpot(player);
                 Console.WriteLine();
 
 
                 // Check if it hit a ship or water
-                ShowShotResult(player, opponent, shot);
+                ConsoleMessages.ShowShotResult(player, opponent, shot);
 
                 // Update player shotgrid and opponent ship status
                 GameLogic.UpadateGrid(player, opponent, shot);
 
                 // Show opponents remaining ships
-                ShowShipsNumber(player, opponent);
+                ConsoleMessages.ShowShipsNumber(player, opponent);
 
                 if (GameLogic.RemainingShips(opponent) == 0)
                 {
@@ -82,22 +74,40 @@ namespace Battleship
                     (player, opponent) = (opponent, player);
                 }
 
-                Console.WriteLine();
-                Console.Write("Press any key");
-                Console.ReadLine();
+                ConsoleMessages.PressAnyKeyMessage();
                 Console.Clear();
 
             } while (winner == null);
 
-            ConsoleMessages.WinnerMessage(winner);
+            return winner; 
         }
+
+        private static void ShipPositions(PlayerInfoModel player)
+        {
+            ConsoleMessages.PostionMessage(player);
+            DisplayShotGrid(player);
+            Console.WriteLine();
+            Console.WriteLine();
+
+            do
+            {
+                // Ask player ship-positions
+                string shipSpot = DataRequests.AskPlayerShipSpot(player);
+
+                // Store position
+                GameLogic.AddShipToGrid(player, shipSpot);
+
+            } while (player.PlayerShipSpot.Count < 5);
+        }
+
         public static PlayerInfoModel CreatePlayer(string defaultPlayerName)
         {
             // Create player instance
             PlayerInfoModel output = new PlayerInfoModel();
 
             // Ask Player Name
-            Console.Write($"{defaultPlayerName}, what is your name: ");
+            Console.WriteLine($" Information of {defaultPlayerName}");
+            Console.Write($" What is your name: ");
 
             // Check that the name is not too long and handle blank-space
             bool nameIsValid = false;
@@ -120,7 +130,7 @@ namespace Battleship
                 }
             } while (nameIsValid == false);
 
-
+            Console.WriteLine();
             return output;
         }
 
@@ -154,25 +164,5 @@ namespace Battleship
             }
         }
 
-        public static void ShowShotResult(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
-        {
-            bool isHit = GameLogic.CheckShotTarget(player, opponent, shot);
-
-            if (isHit == true)
-            {
-                Console.WriteLine($"{player.PlayerName}, you destroyed a ship!");
-            }
-            else
-            {
-                Console.WriteLine($"{player.PlayerName}, you missed!");
-            }
-
-        }
-
-        public static void ShowShipsNumber(PlayerInfoModel player, PlayerInfoModel opponent)
-        {
-            Console.WriteLine($"Your remaining ships: {GameLogic.RemainingShips(player)} ");
-            Console.WriteLine($"{opponent.PlayerName} remaining ships: {GameLogic.RemainingShips(opponent)} ");
-        }
     }
 }

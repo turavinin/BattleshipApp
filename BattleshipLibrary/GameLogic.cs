@@ -42,7 +42,7 @@ namespace BattleshipLibrary
 
         public static void AddShipToGrid(PlayerInfoModel player, string shipSpot)
         {
-            (string letter, int number) = SplitPosition(player, shipSpot);
+            (string letter, int number) = SplitPosition(shipSpot);
 
             GridSpotModel ship = new GridSpotModel
             {
@@ -53,7 +53,7 @@ namespace BattleshipLibrary
             player.PlayerShipSpot.Add(ship);
         }
 
-        private static (string letter, int number) SplitPosition(PlayerInfoModel player, string shipSpot)
+        private static (string letter, int number) SplitPosition(string shipSpot)
         {
             string letterOutput = shipSpot.Substring(0, 1).ToUpper();
             int numberOutput = int.Parse(shipSpot.Substring(1));
@@ -75,7 +75,7 @@ namespace BattleshipLibrary
 
         public static void UpadateGrid(PlayerInfoModel player, PlayerInfoModel opponent, string shot)
         {
-            (string letter, int number) = SplitPosition(player, shot);
+            (string letter, int number) = SplitPosition(shot);
 
             int shotIndex = SearchShotIndex(player, letter, number);
             int opponentIndex = SearchShipIndex(opponent, letter, number);
@@ -112,25 +112,6 @@ namespace BattleshipLibrary
             return output; 
         }
 
-        public static bool ValidateSpot(PlayerInfoModel player, string position)
-        {
-            bool output = false;
-
-            (string letter, int number) = SplitPosition(player, position);
-
-            int index = SearchShipIndex(player, letter, number);
-
-            // Check if index exist
-            if (index < 0)
-            {
-                output = true;
-
-                return output; 
-            }
-
-            return output; 
-        }
-
         private static int SearchShipIndex(PlayerInfoModel player, string letter, int number)
         {
             int output = player.PlayerShipSpot.FindIndex(e => e.SpotLetter == letter && e.SpotNumber == number);
@@ -149,7 +130,7 @@ namespace BattleshipLibrary
         {
             bool output = false; 
 
-            (string letter, int number) = SplitPosition(player, shot);
+            (string letter, int number) = SplitPosition(shot);
 
             int opponentIndex = SearchShipIndex(opponent, letter, number);
 
@@ -167,7 +148,7 @@ namespace BattleshipLibrary
         {
             bool output = false;
 
-            (string letter, int number) = SplitPosition(player, shotElection);
+            (string letter, int number) = SplitPosition(shotElection);
 
             int index = SearchShotIndex(player, letter, number);
 
@@ -179,6 +160,25 @@ namespace BattleshipLibrary
             }
 
             return output; 
+        }
+
+        public static bool ValidateShipSpot(PlayerInfoModel player, string position)
+        {
+            bool output = false;
+
+            (string letter, int number) = SplitPosition(position);
+
+            int index = SearchShipIndex(player, letter, number);
+
+            // Check if index exist
+            if (index < 0)
+            {
+                output = true;
+
+                return output;
+            }
+
+            return output;
         }
     }
 }

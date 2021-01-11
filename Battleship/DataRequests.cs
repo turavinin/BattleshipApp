@@ -11,28 +11,16 @@ namespace Battleship
 {
     public class DataRequests
     {
-        public static string AskPlayerShot(PlayerInfoModel player)
-        {
-            Console.WriteLine();
-            Console.Write($"{player.PlayerName}, what is your shot? (ej. A3): ");
-            string shotElection = Console.ReadLine();
-
-            string output = ValidateShot(player, shotElection);
-
-            return output;
-        }
-
         internal static bool RestartMessage()
         {
-            Console.WriteLine();
-            Console.Write("Do you want to play another game (y / n): ");
+            Console.Write(" Do you want to play another game (y / n): ");
             string answer = Console.ReadLine();
-            bool output = ValidateAnswer(answer);
+            bool output = ValidateRestartAnswer(answer);
 
             return output; 
         }
 
-        private static bool ValidateAnswer(string answer)
+        private static bool ValidateRestartAnswer(string answer)
         {
             string pattern = @"(^[y]$|^[n]$)";
             Regex reg = new Regex(pattern);
@@ -64,9 +52,20 @@ namespace Battleship
             return output;
         }
 
+        public static string AskPlayerShotSpot(PlayerInfoModel player)
+        {
+            Console.WriteLine();
+            Console.Write($" {player.PlayerName}, what is your shot? (ej. A3): ");
+            string shotElection = Console.ReadLine();
+
+            string output = ValidateShot(player, shotElection);
+
+            return output;
+        }
+
         public static string AskPlayerShipSpot(PlayerInfoModel player)
         {
-            Console.Write($"{player.PlayerName}, place your {player.PlayerShipSpot.Count + 1} ship (ej. A3): ");
+            Console.Write($" {player.PlayerName}, place your {player.PlayerShipSpot.Count + 1} ship (ej. A3): ");
             string position = Console.ReadLine();
             string output = ValidatePostion(player, position);
 
@@ -87,7 +86,7 @@ namespace Battleship
             {
                 if (reg.IsMatch(shotElection) == false)
                 {
-                    Console.Write("Invalid shot. Please try again: ");
+                    Console.Write(" Invalid shot. Please try again: ");
                     shotElection = Console.ReadLine();
                 }
                 else if (reg.IsMatch(shotElection) == true && checkSpot == false)
@@ -97,7 +96,7 @@ namespace Battleship
                 }
                 else if (isFreeSpot == false)
                 {
-                    Console.Write("You had already shot there. Please try again: ");
+                    Console.Write(" You had already shot there. Please try again: ");
                     shotElection = Console.ReadLine();
                     checkSpot = false;
                 }
@@ -127,17 +126,17 @@ namespace Battleship
             {
                 if (reg.IsMatch(output) == false)
                 {
-                    Console.Write("Invalid position. Please try again: ");
+                    Console.Write(" Invalid position. Please try again: ");
                     output = Console.ReadLine();
                 }
                 else if (reg.IsMatch(output) == true && checkSpot == false)
                 {
-                    isFreeSpot = GameLogic.ValidateSpot(player, output);
+                    isFreeSpot = GameLogic.ValidateShipSpot(player, output);
                     checkSpot = true;
                 }
                 else if (isFreeSpot == false)
                 {
-                    Console.Write("There is already a ship in that position. Please try again: ");
+                    Console.Write(" There is already a ship in that position. Please try again: ");
                     output = Console.ReadLine();
                     checkSpot = false;
                 }
